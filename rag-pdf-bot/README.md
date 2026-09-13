@@ -81,7 +81,7 @@ rag-pdf-bot/
    are retrieved from FAISS.
 4. **Generate** — The retrieved chunks are inserted into a prompt template
    along with your question and recent chat history, then sent to
-   `gemini-1.5-flash`, which streams its answer back token-by-token.
+   `gemini-3.5-flash`, which streams its answer back token-by-token.
 
 ## Configuration options (sidebar)
 
@@ -91,38 +91,6 @@ rag-pdf-bot/
 | Chunk overlap  | Overlap between consecutive chunks            | 150     |
 | Top-K          | Number of chunks retrieved per question       | 4       |
 
-## Troubleshooting
 
-- **`404 models/... is not found`** — Google retires Gemini model IDs on a
-  fast schedule. Check the current list at
-  [ai.google.dev/gemini-api/docs/models](https://ai.google.dev/gemini-api/docs/models)
-  and set an env var to override the default without touching code:
-  ```bash
-  export GEMINI_CHAT_MODEL=gemini-3.5-flash   # or whatever is current
-  ```
-- **`ImportError` / attribute errors from `langchain_google_genai`** — make
-  sure you installed `langchain-google-genai>=4.0.0` (it moved to Google's
-  new `google-genai` SDK). Run `pip install -U -r requirements.txt` in a
-  clean virtual environment if you upgraded from an older version.
-- **Embedding call fails** — `gemini-embedding-001` is the current
-  general-availability embedding model at time of writing. If it's since
-  been superseded, swap the `EMBEDDING_MODEL` constant in
-  `src/vectorstore.py`.
-- **FAISS `allow_dangerous_deserialization` error** — this is expected;
-  the flag is already set in `load_vectorstore()` since we trust our own
-  locally-saved index.
 
-## Notes
 
-- The FAISS index is saved to `faiss_index/` after processing so it can be
-  reloaded programmatically (see `src/vectorstore.py:load_vectorstore`)
-  without re-embedding.
-- Swap `gemini-1.5-flash` for `gemini-1.5-pro` in `src/rag_chain.py` if you
-  want higher-quality (slower, costlier) answers.
-- This is a portfolio/demo project — for production use, add proper auth,
-  rate limiting, and persistent storage per user/session.
-
-## License
-
-MIT — use freely for learning, portfolios, or as a starting point for your
-own RAG projects.
